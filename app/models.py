@@ -1,23 +1,23 @@
-from enum import Enum
+from enum import IntEnum
 from typing import Optional
 
 from pydantic import BaseModel
 
 
-class StatusCode(Enum):
-    OK: 200
-    CREATED: 201
+class StatusCode(IntEnum):
+    OK = 200
+    CREATED = 201
 
-    MOVE_PERMANENT: 301
-    MOVE_TEMP: 302
+    MOVE_PERMANENT = 301
+    MOVE_TEMP = 302
 
-    BAD_REQUEST: 400
-    UNAUTHORIZED: 401
-    FORBIDDEN: 403
-    NOT_FOUND: 404
+    BAD_REQUEST = 400
+    UNAUTHORIZED = 401
+    FORBIDDEN = 403
+    NOT_FOUND = 404
 
-    INTERNAL_ERROR: 500
-    NOT_IMPLEMENTED: 501
+    INTERNAL_ERROR = 500
+    NOT_IMPLEMENTED = 501
 
 
 class UserModel(BaseModel):
