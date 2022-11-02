@@ -4,8 +4,9 @@ from sanic_ext.extensions.openapi import openapi
 from tortoise.transactions import in_transaction
 
 from app.database import Transaction, Bill, TransactionStatus
-from app.models import WebhookBody, WebhookResponse
+from app.models import WebhookBody, BaseResponseBody, BaseResponse, StatusCode
 from utis.hashing import get_signature
+from utis.validation import json_dump
 
 payment_bp = Blueprint('payment_blueprint', url_prefix='/payment')
 
@@ -23,7 +24,7 @@ async def change_balance(request: Request) -> HTTPResponse:
         amount=payload.amount
     )
     if signature != payload.signature:
-        raise SanicException('Bad signature', status_code=400)
+        raise SanicException('Bad signature', status_code=StatusCode.BAD_REQUEST.value)
     transaction = await Transaction.get(pk=payload.transaction_id)
     bill = await Bill.get(pk=payload.bill_id)
     if bill.balance + payload.amount < 0:
@@ -41,5 +42,9 @@ async def change_balance(request: Request) -> HTTPResponse:
         except Exception:
             transaction.status = TransactionStatus.ERROR
             await transaction.save()
-    response = WebhookResponse(result=transaction.status.value)
-    return json(response.dict())
+            raise SanicException('Something wrong', status_code=StatusCode.INTERNAL_ERROR.value)
+    response = BaseResponse(
+        payload=BaseResponseBody(message=transaction.status.value).dict(),
+        status_code=StatusCode.CREATED
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)

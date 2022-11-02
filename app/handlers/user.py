@@ -4,7 +4,7 @@ from sanic_ext.extensions.openapi import openapi
 from sanic_ext.extensions.openapi.definitions import Response, Parameter
 
 import utis.models.user as u
-from app.models import UserModel, VerifyUrlResponse
+from app.models import UserModel, VerifyUrlResponse, BaseResponse, StatusCode, BaseResponseBody
 from utis.auth import protected
 from utis.validation import objects_model_to_dict, json_dump, true_check
 
@@ -23,7 +23,11 @@ async def sing_up(request: Request) -> HTTPResponse:
     user_param = UserModel(**request.json)
     user = await u.create_user(user_param=user_param)
     link = await u.create_accept_url(user=user)
-    return json({'message': link})
+    response = BaseResponse(
+        payload=BaseResponseBody(message=link).dict(),
+        status_code=StatusCode.CREATED
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)
 
 
 @user_bp.get('/accept/<url:str>')
@@ -43,7 +47,11 @@ async def accept_user_link(request: Request, url: str) -> HTTPResponse:
 async def sing_in(request: Request) -> HTTPResponse:
     user_param = UserModel(**request.json)
     token = await u.user_login(user_param)
-    return json({'token': token})
+    response = BaseResponse(
+        payload=BaseResponseBody(message=token).dict(),
+        status_code=StatusCode.OK
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)
 
 
 @user_bp.put('/<user_id:int>')
@@ -55,7 +63,11 @@ async def sing_in(request: Request) -> HTTPResponse:
 async def change_user(request: Request, user_id: int) -> HTTPResponse:
     active: str = request.args.get('active')
     await u.change_user_status(user_id=user_id, active=true_check(active))
-    return json({'message': 'OK'})
+    response = BaseResponse(
+        payload=BaseResponseBody(message='OK').dict(),
+        status_code=StatusCode.OK
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)
 
 
 @user_bp.get('/list')
@@ -65,5 +77,8 @@ async def change_user(request: Request, user_id: int) -> HTTPResponse:
 @protected(role_check=True)
 async def get_user_list(request: Request) -> HTTPResponse:
     users = await u.get_user_list()
-    users_dict = await objects_model_to_dict(users, extract=['password'])
-    return json(users_dict, dumps=json_dump)
+    response = BaseResponse(
+        payload=await objects_model_to_dict(users, extract=['password']),
+        status_code=StatusCode.OK
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)

@@ -7,7 +7,7 @@ from sanic_ext.extensions.openapi import openapi
 from sanic_ext.extensions.openapi.definitions import Response, Parameter
 
 import utis.models.bill as b
-from app.models import BillModel, WebhookResponse
+from app.models import BillModel, BaseResponse, StatusCode, BaseResponseBody
 from utis.auth import protected
 from utis.validation import json_dump, objects_model_to_dict
 
@@ -21,8 +21,11 @@ bill_bp = Blueprint('bill_blueprint', url_prefix='/bill')
 @protected
 async def get_bills(request: Request) -> HTTPResponse:
     bills = await b.get_bills(user_id=request.ctx.token_payload.user_id)
-    bills_dict = await objects_model_to_dict(bills)
-    return json(bills_dict, dumps=json_dump)
+    response = BaseResponse(
+        payload=await objects_model_to_dict(bills),
+        status_code=StatusCode.OK
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)
 
 
 @bill_bp.get('/history')
@@ -40,8 +43,11 @@ async def get_history(request: Request) -> HTTPResponse:
         bill_id=bill_id,
         user_id=request.ctx.token_payload.user_id
     )
-    transactions_dict = await objects_model_to_dict(transactions)
-    return json(transactions_dict, dumps=json_dump)
+    response = BaseResponse(
+        payload=await objects_model_to_dict(transactions),
+        status_code=StatusCode.OK
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)
 
 
 @bill_bp.post('/add')
@@ -67,10 +73,12 @@ async def add_balance(request: Request) -> HTTPResponse:
     async with aiohttp.ClientSession() as session:
         async with session.post(url=webhook_params.url,
                                 json=webhook_params.payload.dict()) as resp:
-            resp_body = await resp.json()
-            resp_body = WebhookResponse(**resp_body)
-    return json({
-        'message': f'bill with id={webhook_params.payload.bill_id} complite with status {resp_body.result}'})  # noqa
+            resp_body = BaseResponseBody(**await resp.json())
+    response = BaseResponse(
+        payload=BaseResponseBody(message=f'Bill with id={webhook_params.payload.bill_id} complete with status {resp_body.message}').dict(),  # noqa
+        status_code=StatusCode.OK
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)
 
 
 @bill_bp.get('/all')
@@ -79,5 +87,8 @@ async def add_balance(request: Request) -> HTTPResponse:
 @protected(role_check=True)
 async def all_users_bills(request: Request) -> HTTPResponse:
     bills = await b.get_all_users_bill()
-    bills_dict = await objects_model_to_dict(bills)
-    return json(bills_dict, dumps=json_dump)
+    response = BaseResponse(
+        payload=await objects_model_to_dict(bills),
+        status_code=StatusCode.OK
+    )
+    return json(response.payload, dumps=json_dump, status=response.status_code.value)

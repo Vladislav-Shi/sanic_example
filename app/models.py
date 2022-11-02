@@ -1,6 +1,23 @@
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
+
+
+class StatusCode(Enum):
+    OK: 200
+    CREATED: 201
+
+    MOVE_PERMANENT: 301
+    MOVE_TEMP: 302
+
+    BAD_REQUEST: 400
+    UNAUTHORIZED: 401
+    FORBIDDEN: 403
+    NOT_FOUND: 404
+
+    INTERNAL_ERROR: 500
+    NOT_IMPLEMENTED: 501
 
 
 class UserModel(BaseModel):
@@ -23,10 +40,6 @@ class WebhookBody(BaseModel):
 class WebhookRequestModel(BaseModel):
     url: str
     payload: WebhookBody
-
-
-class WebhookResponse(BaseModel):
-    result: str
 
 
 class JwtPayload(BaseModel):
@@ -60,3 +73,12 @@ class UpdateProductModel(BaseModel):
 class BillModel(BaseModel):
     id: int
     balance: int
+
+
+class BaseResponseBody(BaseModel):
+    message: str
+
+
+class BaseResponse(BaseModel):
+    status_code: StatusCode
+    payload: dict
