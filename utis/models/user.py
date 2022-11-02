@@ -44,8 +44,7 @@ async def user_login(user_param: UserModel) -> str:
             'exp': (datetime.utcnow() + timedelta(
                 seconds=config.TOKEN_TTL)).strftime('%Y%m%d%H%M%S')
         }
-        token = jwt.encode(payload=payload, key=config.SECRET_KEY,
-                           algorithm='HS256')
+        token = jwt.encode(payload=payload, key=config.SECRET_KEY, algorithm='HS256')
         return token
     raise SanicException('user not activated', status_code=400)
 

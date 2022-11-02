@@ -1,5 +1,5 @@
 from enum import IntEnum
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel
 
@@ -81,4 +81,4 @@ class BaseResponseBody(BaseModel):
 
 class BaseResponse(BaseModel):
     status_code: StatusCode
-    payload: dict
+    payload: Union[dict, list]

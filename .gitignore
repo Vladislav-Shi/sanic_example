@@ -1,5 +1,4 @@
 /config/env
 /.mypy_cache/
 /tests/.pytest_cache/
-/tests/
 /.idea/
