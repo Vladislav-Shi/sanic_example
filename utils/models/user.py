@@ -6,17 +6,16 @@ from sanic import Sanic
 from sanic.exceptions import SanicException
 
 from app.database import User, Verification
-from app.models import UserModel
 from config.setting import config
 from utils.hashing import get_password_hash, get_accept_string
 from utils.validation import get_url
 
 
-async def create_user(user_param: UserModel) -> User:
+async def create_user(username: str, password: str) -> User:
     try:
         return await User.create(
-            username=user_param.username,
-            password=get_password_hash(password=user_param.password)
+            username=username,
+            password=get_password_hash(password=password)
         )
     except Exception:
         raise SanicException('user already exists', status_code=400)
@@ -31,10 +30,10 @@ async def create_superuser(username: str, password: str) -> None:
     )
 
 
-async def user_login(user_param: UserModel) -> str:
+async def user_login(username: str, password: str) -> str:
     user = await User.get_or_none(
-        username=user_param.username,
-        password=get_password_hash(password=user_param.password)
+        username=username,
+        password=get_password_hash(password=password)
     )
     if user is None:
         raise SanicException('user not found', status_code=400)

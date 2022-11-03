@@ -21,7 +21,7 @@ user_bp = Blueprint('user_blueprint', url_prefix='/user')
 )
 async def sing_up(request: Request) -> HTTPResponse:
     user_param = UserModel(**request.json)
-    user = await u.create_user(user_param=user_param)
+    user = await u.create_user(**user_param.dict())
     link = await u.create_accept_url(user=user)
     response = BaseResponse(
         payload=BaseResponseBody(message=link).dict(),
@@ -46,7 +46,7 @@ async def accept_user_link(request: Request, url: str) -> HTTPResponse:
 )
 async def sing_in(request: Request) -> HTTPResponse:
     user_param = UserModel(**request.json)
-    token = await u.user_login(user_param)
+    token = await u.user_login(**user_param.dict())
     response = BaseResponse(
         payload=BaseResponseBody(message=token).dict(),
         status_code=StatusCode.OK

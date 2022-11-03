@@ -26,28 +26,3 @@ def init_app() -> Sanic:
         )
 
     return app
-
-
-def test_app() -> Sanic:
-    app = Sanic(name=config.APP_NAME)
-    init_blueprint(app)
-    register_tortoise(
-        app=app,
-        db_url='sqlite://:memory:',
-        modules={'models': ['app.database']},
-        generate_schemas=True
-    )
-
-    @app.listener('before_server_start')  # type: ignore[arg-type]
-    async def pre_add(app: Sanic, loop: str) -> None:
-        await create_superuser(
-            username=config.ADMIN_NAME,
-            password=config.ADMIN_PASS
-        )
-    app.ext.openapi.add_security_scheme(
-        'token',
-        'http',
-        scheme='bearer',
-        bearer_format='JWT',
-    )
-    return app

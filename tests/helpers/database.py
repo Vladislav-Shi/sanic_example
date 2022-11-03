@@ -34,10 +34,11 @@ def create_product(
 
 
 def create_user(
-        pk: int = 1,
+        pk: int = 2,
         username: str = 'test',
-        is_admin: bool = True,
+        is_admin: bool = False,
         password: str = 'test',
+        is_active: bool = True,
         create_at: datetime = create_date(),
         update_at: datetime = create_date()
 ) -> User:
@@ -45,6 +46,7 @@ def create_user(
         pk=pk,
         username=username,
         is_admin=is_admin,
+        is_active=is_active,
         password=get_password_hash(password),
         create_at=create_at,
         update_at=update_at
