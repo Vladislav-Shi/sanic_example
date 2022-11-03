@@ -1,11 +1,16 @@
+import json
 from datetime import datetime
+from typing import Union, Sequence, List
+
+from tortoise import Model
 
 from app.database import Product, User
-from utis.hashing import get_password_hash
+from utils.hashing import get_password_hash
+from utils.validation import json_dump, objects_model_to_dict
 
 
 def create_date() -> datetime:
-    return datetime(year=2022, day=1, month=1)
+    return datetime(year=2022, day=1, month=1, second=1, microsecond=1, minute=1, hour=1)
 
 
 def create_product(
@@ -44,3 +49,11 @@ def create_user(
         create_at=create_at,
         update_at=update_at
     )
+
+
+async def to_response_view(
+        objets: Union[Sequence[Model], Model],
+        extract: List[str] = []
+) -> dict:
+    result = json_dump(await objects_model_to_dict(objets=objets, extract=extract))
+    return json.loads(result)

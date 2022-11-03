@@ -6,8 +6,8 @@ from sanic.exceptions import SanicException
 from app.database import Bill, Transaction, User
 from app.models import WebhookBody, WebhookRequestModel
 from config.setting import config
-from utis.hashing import get_signature
-from utis.validation import get_url
+from utils.hashing import get_signature
+from utils.validation import get_url
 
 
 async def get_bills(user_id: int) -> List[Bill]:

@@ -9,7 +9,7 @@ from sanic.log import logger
 from app.database import User
 from app.models import JwtPayload
 from config.setting import config
-from utis.validation import time_check
+from utils.validation import time_check
 
 
 async def check_token(request: Request, role_check: bool = False) -> bool:

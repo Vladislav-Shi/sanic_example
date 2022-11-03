@@ -5,8 +5,8 @@ from tortoise.transactions import in_transaction
 
 from app.database import Transaction, Bill, TransactionStatus
 from app.models import WebhookBody, BaseResponseBody, BaseResponse, StatusCode
-from utis.hashing import get_signature
-from utis.validation import json_dump
+from utils.hashing import get_signature
+from utils.validation import json_dump
 
 payment_bp = Blueprint('payment_blueprint', url_prefix='/payment')
 

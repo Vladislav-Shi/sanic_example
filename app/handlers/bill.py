@@ -6,10 +6,10 @@ from sanic.exceptions import SanicException
 from sanic_ext.extensions.openapi import openapi
 from sanic_ext.extensions.openapi.definitions import Response, Parameter
 
-import utis.models.bill as b
+import utils.models.bill as b
 from app.models import BillModel, BaseResponse, StatusCode, BaseResponseBody
-from utis.auth import protected
-from utis.validation import json_dump, objects_model_to_dict
+from utils.auth import protected
+from utils.validation import json_dump, objects_model_to_dict
 
 bill_bp = Blueprint('bill_blueprint', url_prefix='/bill')
 

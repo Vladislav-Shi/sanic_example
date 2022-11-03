@@ -69,5 +69,5 @@ async def objects_model_to_dict(
                     product_dict.pop(key)
             result.append(product_dict)  # type: ignore[union-attr]
     else:
-        raise ValueError('Object must be List[Model] or Model')
+        raise ValueError(f'Object must be List[Model] or Model ({type(objets)})')
     return result

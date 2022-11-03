@@ -5,10 +5,10 @@ from sanic.exceptions import SanicException
 from sanic_ext.extensions.openapi import openapi
 from sanic_ext.extensions.openapi.definitions import Response, Parameter
 
-import utis.models.product as p
+import utils.models.product as p
 from app.models import ProductModel, FullProductModel, UpdateProductModel, BaseResponse, StatusCode, BaseResponseBody
-from utis.auth import protected
-from utis.validation import json_dump, objects_model_to_dict
+from utils.auth import protected
+from utils.validation import json_dump, objects_model_to_dict
 
 product_bp = Blueprint('product_blueprint', url_prefix='/product')
 
@@ -21,7 +21,7 @@ product_bp = Blueprint('product_blueprint', url_prefix='/product')
 async def product_list(request: Request) -> HTTPResponse:
     products = await p.get_product_list(is_admin=request.ctx.is_admin)
     response = BaseResponse(
-        payload=await objects_model_to_dict(products),
+        payload=await objects_model_to_dict(products, extract=['update_at']),
         status_code=StatusCode.OK
     )
     return json(response.payload, dumps=json_dump, status=response.status_code.value)

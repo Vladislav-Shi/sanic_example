@@ -8,8 +8,8 @@ from sanic.exceptions import SanicException
 from app.database import User, Verification
 from app.models import UserModel
 from config.setting import config
-from utis.hashing import get_password_hash, get_accept_string
-from utis.validation import get_url
+from utils.hashing import get_password_hash, get_accept_string
+from utils.validation import get_url
 
 
 async def create_user(user_param: UserModel) -> User:

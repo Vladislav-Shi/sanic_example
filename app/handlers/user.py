@@ -3,10 +3,10 @@ from sanic.request import Request
 from sanic_ext.extensions.openapi import openapi
 from sanic_ext.extensions.openapi.definitions import Response, Parameter
 
-import utis.models.user as u
+import utils.models.user as u
 from app.models import UserModel, VerifyUrlResponse, BaseResponse, StatusCode, BaseResponseBody
-from utis.auth import protected
-from utis.validation import objects_model_to_dict, json_dump, true_check
+from utils.auth import protected
+from utils.validation import objects_model_to_dict, json_dump, true_check
 
 user_bp = Blueprint('user_blueprint', url_prefix='/user')
 
